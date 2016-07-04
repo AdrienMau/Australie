@@ -1,0 +1,29 @@
+radius=0.01e-6;
+d_radius=1.2e-6;
+resolution=300;
+theta_start = 0;
+theta_stop = 90;
+
+# set parameters for cylinders to construct toroid
+height = 4*pi*radius/resolution*20;
+
+
+
+resolution=round(resolution*abs(theta_start-theta_stop)/360);
+theta = linspace(theta_start*pi/180,theta_stop*pi/180,resolution);
+dr = d_radius;
+
+coord=matrix(2*resolution,2);
+
+for(i=(resolution):-1:1) {
+
+  coord(i,1)=-(radius+dr*theta(i)/(2*pi))*cos(theta(i));
+  coord(resolution-i,2)=-(radius+dr*theta(i)/(2*pi))*sin(theta(i));
+}
+
+for(i=(resolution+1):2*resolution) {
+
+  coord(i,1)=(radius+dr*theta(i-75)/(2*pi))*cos(theta(i-75));
+  coord(i,2)=(radius+dr*theta(i-75)/(2*pi))*sin(theta(i-75));
+}
+coord=coord*1e6;

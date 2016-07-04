@@ -1,0 +1,25 @@
+
+resolution=1; #space between points
+number=50;
+#size = 2*resolution*number
+
+# set parameters for cylinders to construct toroid
+# height = 4*pi*radius/resolution*20;
+
+
+coord=matrix(2*number,2);
+
+for(i=(number):-1:1) 
+{
+	coord(i,1)=i*resolution;
+	coord(i,2)=sin(i*resolution);
+)
+	
+}
+
+for(i=(number+1):2*number) 
+{
+	coord(i,1)=i*resolution;
+	coord(i,2)=sin(i*resolution);
+
+  }

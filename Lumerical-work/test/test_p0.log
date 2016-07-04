@@ -1,0 +1,45 @@
+FDTD Solutions Version 8.16.884 (Windows 64bit)
+ expires (month/day/year): 7/10/2016
+using config file: C:/Users/Adrien/AppData/Roaming/Lumerical/FDTD Solutions.ini
+license host: DESKTOP-IMGE42V
+current time: Fri Jun 10 10:44:40 2016
+Running on host: DESKTOP-IMGE42V
+All processes are communicating and ready to proceed to simulation...
+Running fsp file: C:\Program Files\Lumerical\FDTD\bin\fdtd-engine-msmpi.exe -remote C:/Users/Adrien/Documents/Lumerical-work/test/test.fsp
+number of processors is 8
+processors are distributed as: 4x2x1
+Running 3D Simulation
+Starting meshing
+Simulation size in gridpoints: 103 x 170 x 39
+Refined 14590 mesh cells (2.13651%)
+Completed meshing!
+Meshing complete in 62.9375 seconds of CPU time
+Starting meshing
+Simulation size in gridpoints: 103 x 170 x 39
+Refined 14460 mesh cells (2.11747%)
+Completed meshing!
+Meshing complete in 61.8281 seconds of CPU time
+Starting meshing
+Simulation size in gridpoints: 103 x 170 x 39
+Refined 13510 mesh cells (1.97836%)
+Completed meshing!
+Meshing complete in 62.8281 seconds of CPU time
+finished material properties
+Using selected optimization level: 2
+Selecting 3d kernel for splitFieldDirection=0 and optLevel=2
+-----------------------------------------
+Beginning initialization of 3D Simulation
+Starting to add sources to simulation
+Reverted to narrowband source injection
+Adding 3D Gaussian Source propagating in X
+Starting to add boundary conditions to simulation
+Adding 3D PML BC
+Adding 3D Parallel BC
+Adding 3D PML BC
+Adding 3D Parallel BC
+Adding 3D PML BC
+Adding 3D PML BC
+Starting to add monitors to Simulation
+Adding analysis monitor
+Finished initialization of 3D Simulation
+-----------------------------------------
