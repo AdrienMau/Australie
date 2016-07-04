@@ -1,0 +1,26 @@
+[SLOWSCAN]
+Bitmap=multiplefall--1pA-areadose20000-dotdose02.0088-df1-1loop.bmp
+LowerLeftUV=2.554045,2.344833
+UpperRightUV=2.560860,2.351648
+LocalOriginUV=2.557452,2.348240
+StageUV=2.557452,2.348240
+RotationUV=0
+[METADATA]
+User=Administrator
+Project=%UserRoot%PROJECT\NEW.DSK
+Date=2016/06/28
+Time=16:47:58
+Magnification=14757x
+Write field=7µm
+FoV=6.8µm
+Detector=SE
+Focus/WD=10.193mm
+Probe Current=0.8pA
+Acc. Voltage=35.0kV
+Active Mode=35kV 10µm (6) 1pA (Patterning / 30kV 10µm 0pA)
+Position U=2.5575mm
+Position V=2.3482mm
+Point Average=16
+Average Type=Line averaging
+Average Count=2
+Step Size=0.0133µm

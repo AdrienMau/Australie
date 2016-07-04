@@ -1,0 +1,26 @@
+[SLOWSCAN]
+Bitmap=triangle-fptriangle2--1pA-areadose1000-dotdose2.0088-df1-20loop.bmp
+LowerLeftUV=2.524997,2.345049
+UpperRightUV=2.527518,2.347324
+LocalOriginUV=2.526258,2.346186
+StageUV=2.526448,2.346936
+RotationUV=0
+[METADATA]
+User=Administrator
+Project=%UserRoot%PROJECT\NEW.DSK
+Date=2016/06/28
+Time=16:21:21
+Magnification=16535x
+Write field=6µm
+FoV=2.5µm
+Detector=SE
+Focus/WD=10.193mm
+Probe Current=0.2pA
+Acc. Voltage=35.0kV
+Active Mode=35kV 10µm (6) 1pA (Patterning / 30kV 10µm 0pA)
+Position U=2.5263mm
+Position V=2.3462mm
+Point Average=16
+Average Type=Line averaging
+Average Count=2
+Step Size=0.0049µm
