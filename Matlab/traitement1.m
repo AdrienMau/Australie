@@ -3,13 +3,16 @@
 % % img2=fftshift(fft2(img));
 % % imshowf(img2)
 % 
-% 
-% %Ouverture
-% img=imread('test-dots.bmp');
-% s=size(img);
-% if(s(3)==3) img=rgb2gray(img);
-% end
-% s=size(img);
+path(path,'C:\Users\Adrien\Documents\PIMS\Code')
+%Ouverture et conversion noir blanc
+if ~exist('img','var')
+img=imread('test-dots.bmp');
+s=size(img);
+if(s(3)==3) img=rgb2gray(img);
+end
+s=size(img);
+end
+
 % subplot(2,1,1)
 % imshow2(img);
 % %histogramme
@@ -32,27 +35,36 @@
 
 
 %On prend deux trous
-imgpart=img(20:50,425:473);
+% imgpart=img(20:50,429:470)';
+imgpart=img(20:50,429:470);
 subplot(2,1,1)
 imshow2(imgpart);
 spart=size(imgpart)
 
 histo_imgpart=sum(imgpart)/spart(1);
+
+
 %approx non linéaire avec parametre p
 % p(1) = offset
 % p(2),p(5) : amplitudes des 2 gaussiennes
 % p(3),p(6) : moyennes des 2 gaussiennes
 % p(4),p(7) : variances des 2 gaussiennes
 OPTIONS=optimset('Algorithm','levenberg-marquardt');
+
+%recherche parametres proches
 p0=zeros(1,7);
 p0(1)=max(histo_imgpart); %offset
 p0(2)=min(histo_imgpart); %amplitude (negative)
 p0(5)=p0(2);  %amplitude (negative)
 p0(3)=spart(2)/3; %centre
 p0(6)=2*spart(2)/3; %centre
-p0(4)=3;
+p0(4)=3; %variance
 p0(7)=p0(4);
-p=lsqnonlin(@(p)R2gaussJacob(1:spart(2),histo_imgpart,p),p0,[],[],OPTIONS);
+
+sigmamax=7;
+lb = [-Inf,-Inf,-Inf,-sigmamax,-Inf,-Inf,-sigmamax]; %lower bound
+ub = -lb;
+p=lsqnonlin(@(p)R2gaussJacob(1:spart(2),histo_imgpart,p),p0,lb,ub,OPTIONS);
 
 x=1:spart(2);
 subplot(2,1,2)
