@@ -14,10 +14,10 @@ scrsz = get(groot,'ScreenSize'); %screensize
 initvalue = 1;
 
 %sinus
-T=2*pi; %sinus period
-x=(0:initvalue:10)*2*pi/T; % sampling
+T=100; %SIGNAL PERIOD (sinus)
+x=(0:initvalue:6*T)*2*pi/T; % sampling
 y=sin(x);
-plot(x,y)
+
 
 
 %     fpath2=strcat(fpath,'000700.2Ddbl'); %on affiche la 700 en premier
@@ -27,13 +27,14 @@ plot(x,y)
         f = figure('Visible','off','Position',[1 scrsz(4)/4 scrsz(3)/2 scrsz(4)/2]);
         ax = axes('Units','pixels');
         set(groot,'CurrentFigure',f);
-        im=imread('cameraman.tif');
+        plot(x,y)
+%         im=imread('cameraman.tif');
 %         image=imshow(im,'DisplayRange',[min(im(:)) max(im(:))],'InitialMagnification','fit');hold on;
-        title('');
+        title('signal');
     
    % Create SLIDER
     sld = uicontrol('Style', 'slider',...
-        'Min',0,'Max',1400,'Value',700,'SliderStep',[pas/1400 pas/1400],...
+        'Min',0,'Max',1400,'Value',initvalue,'SliderStep',[pas/1400 pas/1400],...
         'Position', [300 3 120 20],...
         'Callback', @newvalue);
 					
@@ -60,7 +61,7 @@ plot(x,y)
         'String',r);
 
         set(groot,'CurrentFigure',f);
-        x=(0:r:10)*2*pi/T; % sampling
+        x=(0:r:6*T)*2*pi/T; % sampling
 y=sin(x);
 plot(x,y)
         
