@@ -271,7 +271,7 @@ if isnan(magnif) %not va valid number
 else %set new magnification , and new pixelrate
     handles.magnification=str2double(get(hObject,'String'));
     handles.pixelrate=109590/magnif; %on Image: 1pix = pixelrate nm
-    set(handles.text10,'String',strcat('1 Pix=',num2str(round(109590/magnif,3)),'nm'));
+    set(handles.edit2,'String',strcat('1 Pix=',str2double(),'nm'));
     guidata(hObject,handles)
     set(hObject,'BackgroundColor','white')
     pause(0.05)
