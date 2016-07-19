@@ -1,0 +1,26 @@
+[SLOWSCAN]
+Bitmap=fprectangle-200Loop-6.99pA-DD0.01-LD1800-AD100resol.bmp
+LowerLeftUV=2.639185,2.712204
+UpperRightUV=2.641017,2.713693
+LocalOriginUV=2.640101,2.712948
+StageUV=2.640204,2.711589
+RotationUV=0
+[METADATA]
+User=Administrator
+Project=%UserRoot%PROJECT\NEW.DSK
+Date=2016/06/30
+Time=15:04:26
+Magnification=14284x
+Write field=7µm
+FoV=1.8µm
+Detector=SE
+Focus/WD=10.300mm
+Probe Current=6.9pA
+Acc. Voltage=35.0kV
+Active Mode=35kV 20µm (8) 6.0pA  (Patterning / 30kV 10µm 0pA)
+Position U=2.6401mm
+Position V=2.7129mm
+Point Average=16
+Average Type=Line averaging
+Average Count=2
+Step Size=0.0036µm

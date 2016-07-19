@@ -1,0 +1,26 @@
+[SLOWSCAN]
+Bitmap=lines1-6.5pA-dose6000.bmp
+LowerLeftUV=7.948370,7.849543
+UpperRightUV=7.954241,7.855414
+LocalOriginUV=7.951306,7.852478
+StageUV=7.951306,7.852478
+RotationUV=0
+[METADATA]
+User=Administrator
+Project=%UserRoot%PROJECT\NEW.DSK
+Date=2016/06/16
+Time=12:59:04
+Magnification=17130x
+Write field=6µm
+FoV=5.9µm
+Detector=SE
+Focus/WD=10.347mm
+Probe Current=6.8pA
+Acc. Voltage=35.0kV
+Active Mode=35kV 20µm (7) 6.5pA  (Patterning / 30kV 10µm 0pA)
+Position U=7.9513mm
+Position V=7.8525mm
+Point Average=16
+Average Type=Line averaging
+Average Count=2
+Step Size=0.0115µm

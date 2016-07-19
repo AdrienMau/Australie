@@ -1,0 +1,26 @@
+[SLOWSCAN]
+Bitmap=28&29&30.bmp
+LowerLeftUV=2.447884,2.680560
+UpperRightUV=2.450398,2.683074
+LocalOriginUV=2.449141,2.681817
+StageUV=2.449141,2.681817
+RotationUV=0
+[METADATA]
+User=Administrator
+Project=%UserRoot%PROJECT\NEW.DSK
+Date=2016/07/07
+Time=19:51:04
+Magnification=40000x
+Write field=2µm
+FoV=2.5µm
+Detector=SE
+Focus/WD=10.277mm
+Probe Current=0.6pA
+Acc. Voltage=35.0kV
+Active Mode=35kV 10µm (5) 1pA (Patterning / 30kV 10µm 0pA)
+Position U=2.4491mm
+Position V=2.6818mm
+Point Average=16
+Average Type=Line averaging
+Average Count=2
+Step Size=0.0049µm
