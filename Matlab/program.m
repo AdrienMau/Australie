@@ -24,7 +24,7 @@ function varargout = program(varargin)
 
 % Edit the above text to modify the response to help program
 
-% Last Modified by GUIDE v2.5 19-Jul-2016 17:59:07
+% Last Modified by GUIDE v2.5 20-Jul-2016 17:00:21
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -103,9 +103,9 @@ end
 
 
     
-% --- Executes on button press in pushbutton3. TRONQUER
-function pushbutton3_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton3 (see GCBO)
+% --- Executes on button press in pushbutton_tronc. TRONQUER
+function pushbutton_tronc_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_tronc (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -166,56 +166,63 @@ function checkbox1_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-'box !'
+figure
+imshow(imread('C:\Users\Adrien\Pictures\clem je lapine3.png'))
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox1
 
 
 % Button LOAD
-function pushbutton5_Callback(hObject, eventdata, handles)
+function pushbutton_loadpath_Callback(hObject, eventdata, handles)
 
 % handles.folder_cal=uigetdir;
 % guidata(hObject,handles); %sauvegarde le nouveau handle
-% set(handles.edit2, 'String', handles.folder_cal);
-[NomFic,NomEmp] = uigetfile({'*';'*.jpg';'*.png';'*.bmp'},'Choisissez une image') % Choisir une image 
+% set(handles.edit_path, 'String', handles.folder_cal);
+[NomFic,NomEmp] = uigetfile({'*';'*.jpg';'*.png';'*.bmp'},'Choisissez une image'); % Choisir une image 
 if(NomFic) %if a file has been chosen
-    img=imread(strcat(NomEmp,NomFic));
+    img=(imread(strcat(NomEmp,NomFic)));
+ 
     handles.img=img;
     handles.img2=img;
     handles.NomFic=NomFic;
     guidata(hObject,handles)
-    
+
+    %display image
     axes(handles.axes2)
-    imshow(img); title(NomFic);
+    imagesc(img); title(NomFic);
+    axes(handles.axes1)
+    imagesc(img)
+    
+    %Path
     path2=NomEmp;
-    set(handles.edit2,'String',path2);
+    set(handles.edit_path,'String',path2);
 end
 % guidata(hObject,handles); %sauvegarde le nouveau handle
-% set(handles.edit2, 'String', handles.folder_cal);
+% set(handles.edit_path, 'String', handles.folder_cal);
 
 
 % edit2_Callback(hObject, eventdata, handles)
 
-% hObject    handle to pushbutton5 (see GCBO)
+% hObject    handle to pushbutton_loadpath (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
 %TEXT for path
-function edit2_Callback(hObject, eventdata, handles)
-% hObject    handle to edit2 (see GCBO)
+function edit_path_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_path (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 handles.folder_cal=get(hObject,'String');
 
-% Hints: get(hObject,'String') returns contents of edit2 as text
-%        str2double(get(hObject,'String')) returns contents of edit2 as a double
+% Hints: get(hObject,'String') returns contents of edit_path as text
+%        str2double(get(hObject,'String')) returns contents of edit_path as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function edit2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit2 (see GCBO)
+function edit_path_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_path (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -228,23 +235,23 @@ end
 
 
 
-function pushbutton3_CreateFcn(hObject, eventdata, handles)
+function pushbutton_tronc_CreateFcn(hObject, eventdata, handles)
 
-% hObject    handle to pushbutton5 (see GCBO)
+% hObject    handle to pushbutton_loadpath (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
 
-function pushbutton5_CreateFcn(hObject, eventdata, handles)
+function pushbutton_loadpath_CreateFcn(hObject, eventdata, handles)
 
-% hObject    handle to pushbutton5 (see GCBO)
+% hObject    handle to pushbutton_loadpath (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
 
 % --- Reset Troncature 
-function pushbutton12_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton12 (see GCBO)
+function pushbutton_reset_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_reset (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
     handles.img2=handles.img;   
@@ -260,28 +267,31 @@ function pushbutton12_Callback(hObject, eventdata, handles)
 
 
 %USER GIVE THE MAGNIFICATION
-function edit9_Callback(hObject, eventdata, handles)
-% hObject    handle to edit9 (see GCBO)
+function edit_mag_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_mag (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
 magnif=str2double(get(hObject,'String'));
 if isnan(magnif) %not va valid number
-    set(handles.edit9,'String','x');
+    set(handles.edit_mag,'String','x');
+    handles.pixelrate=0;
     set(hObject,'BackgroundColor','red')
+    set(handles.text_taux,'String','Maybe try a number?');
 else %set new magnification , and new pixelrate
     handles.magnification=str2double(get(hObject,'String'));
     handles.pixelrate=109590/magnif; %on Image: 1pix = pixelrate nm
-    set(handles.text10,'String',strcat('1 Pix=',num2str(round(109590/magnif,3)),'nm'));
-    guidata(hObject,handles)
+    set(handles.text_taux,'String',strcat('1 Pix=',num2str(round(109590/magnif,3)),'nm'));
     set(hObject,'BackgroundColor','white')
     pause(0.05)
     set(hObject,'BackgroundColor','green')
 end
+guidata(hObject,handles)
 
 
 % --- Executes during object creation, after setting all properties.
-function edit9_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit9 (see GCBO)
+function edit_mag_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_mag (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -293,23 +303,58 @@ end
 
 
 % --- APPROXGAUSS
-function pushbutton13_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton13 (see GCBO)
+function pushbutton_gauss_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_gauss (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 img2=handles.img2;
+size(img2)
 histo=mean(img2); %histogram of image
 figure
 plot(histo);
-p=fit_trou2D(img2);
-s=size(img2);
-x=1:s(1);
-y=1:s(2);
-imgauss=p0(1)+p0(2)*exp(-(( x-p0(3)).^2+(y-p0(4)).^2)/(2*p0(5)^2));
-imshow(imgauss);
+hold on
+x=1:length(histo);
+p=fit_gauss_2(x,histo);
+fit=p(1)+p(2)*exp(-((x-p(3)).^2)./(2*p(4)*p(4)));
+plot(fit)
+error=histo-fit;
+mean_square_error=error*error';
 
-% --- Executes on button press in pushbutton14.
-function pushbutton14_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton14 (see GCBO)
+%set title (in nm if pixelrate has been defined, else in pixels)
+try
+title(['Gaussian fit: FWHM=',num2str(2.355*p(4)*handles.pixelrate),'nm   Error=',num2str(mean_square_error)])
+catch
+    title(['Gaussian fit: FWHM=',num2str(2.355*p(4)),'pix   Error=',num2str(mean_square_error)])
+end
+
+
+
+%FWHM -ie half maximum width- is sqrt(ln(256))*sigma so approximately 2.355*sigma
+
+% imgauss=p0(1)+p0(2)*exp(-(( x-p0(3)).^2+(y-p0(4)).^2)/(2*p0(5)^2));
+% imshow(imgauss);
+
+% --- Executes on button press in pushbutton_manual.
+%User choose two points and receive the distance in nm between them.
+function pushbutton_manual_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_manual (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+try   % will check if pixelrate has been defined (by entering magnification)
+    if(handles.pixelrate) 
+    end
+    axes(handles.axes1)
+    rect = round(getrect());
+    distance=sqrt(rect(3)*rect(3)+rect(4)*rect(4)) %in pixel
+    distance=distance*handles.pixelrate; %in nm
+    title(['distance = ',num2str(distance),' nm']);
+    handles.distance=distance;
+    guidata(hObject,handles)
+catch       %pixelrate not defined
+    axes(handles.axes1)
+    title(['Please Set Magnification !']);
+end
+
+
+

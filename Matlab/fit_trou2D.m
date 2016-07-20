@@ -44,7 +44,7 @@ k=0;
 %permet d'estimer grossièrement la largeur de la gaussienne en param
 %d'optimisation
 for i=I_v-15:I_v+15
-    if img(i,I_h)>round((Max+Min)/2) && k==0
+    if img(i,I_h)>(Max+Min)/2 && k==0
         k=1;
         rec(1)=i;
     end
