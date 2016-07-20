@@ -24,7 +24,7 @@ function varargout = program(varargin)
 
 % Edit the above text to modify the response to help program
 
-% Last Modified by GUIDE v2.5 19-Jul-2016 16:47:57
+% Last Modified by GUIDE v2.5 19-Jul-2016 17:59:07
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -290,3 +290,26 @@ function edit9_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','red');
 end
+
+
+% --- APPROXGAUSS
+function pushbutton13_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton13 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+img2=handles.img2;
+histo=mean(img2); %histogram of image
+figure
+plot(histo);
+p=fit_trou2D(img2);
+s=size(img2);
+x=1:s(1);
+y=1:s(2);
+imgauss=p0(1)+p0(2)*exp(-(( x-p0(3)).^2+(y-p0(4)).^2)/(2*p0(5)^2));
+imshow(imgauss);
+
+% --- Executes on button press in pushbutton14.
+function pushbutton14_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton14 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
