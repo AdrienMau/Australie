@@ -1,10 +1,11 @@
-function [ p ] = fit_gauss_2(x,y)
+function [ p ] = fit_hgauss(x,y,n)
 %pour amplitude negative
 %approxgauss4: renvoie les coefficients correspondant à l'approximation d'une
-%gaussienne avec offset
+%hypergaussienne avec offset
 %de la forme y=A+Bexp((x-D)^2)/(2s*s)
 %Entrees:
 %   x et y: données à approximer
+%    n : puissance de l'hypergaussienne
 %Sortie:
 %   p0: coefficients autours desquels on va chercher la bonne approximation
 %       p0(1) -> offset selon y => A
@@ -29,6 +30,6 @@ p0(4)=length(x)/2;
 % p0(4)=sqrt(((x(j)-p0(3))^2)*log(2*p0(2)/(p0(2)-p0(1)))/2); 
 
 opts1=  optimset('display','off');
-p=lsqnonlin(@(p)(y-p(1)-p(2)*exp(-((x-p(3)).^2)./(2*p(4)*p(4)))),p0);
+p=lsqnonlin(@(p)(y-p(1)-p(2)*exp(-((x-p(3))./(sqrt(2)*p(4))).^n )),p0);
 
 end

@@ -118,7 +118,7 @@ if(handles.notbusy)
     img_old=handles.img2; %we save the precedent image, if needed user can go back
 
     imshow(img_old)
-    rect = round(getrect());
+    rect = round(getrect())
 
     img2=img_old(rect(2):(rect(2)+rect(4)),rect(1):(rect(1)+rect(3)));
     axes(handles.axes1)
@@ -319,10 +319,10 @@ figure
 plot(histo);
 hold on
 x=1:length(histo);
-
-power= handles.lastSliderVal
+% p=fit_gauss_2(x,histo);
+power= handles.lastSliderVal;
 p=fit_hgauss(x,histo,power);
-%  p=fit_gauss_2(x,histo);
+
 fit=p(1)+p(2)*exp(-((x-p(3))./(sqrt(2)*p(4))).^power);
 plot(fit)
 xlabel('pixel')
@@ -330,7 +330,7 @@ error=histo-fit;
 mean_square_error=error*error';
 
 %set title (in nm if pixelrate has been defined, else in pixels)
-if(power==2) %Gaussian fit (not hypergaussian)
+if(power==1) %Gaussian fit (not hypergaussian)
     try
         title(['Gaussian fit: FWHM=',num2str(2.355*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error))])
     catch
@@ -410,11 +410,11 @@ function slider_power_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
- value=2*round(get(hObject, 'Value')/2); %only odd number
-
+ value=round(get(hObject, 'Value'));
+ if(value==0) value=1;
+ end
  handles.lastSliderVal = value;
  set(handles.text_sliderpower,'String',num2str(value));
- set(handles.slider_power, 'Value', value);
  guidata(hObject, handles);
 
 % Hints: get(hObject,'Value') returns position of slider
@@ -429,13 +429,13 @@ function slider_power_CreateFcn(hObject, eventdata, handles)
 
 
 % set the slider range and step size
- numSteps = 5;
- set(hObject, 'Min', 2);
+ numSteps = 6;
+ set(hObject, 'Min', 0);
  set(hObject, 'Max', 10);
- set(hObject, 'Value', 2);
+ set(hObject, 'Value', 0);
  set(hObject, 'SliderStep', [1/(numSteps-1) , 1/(numSteps-1) ]);
  % save the current/last slider value
- handles.lastSliderVal = 2;
+ handles.lastSliderVal = get(hObject,'Value');
  % Update handles structure
  guidata(hObject, handles);
 
