@@ -1,7 +1,7 @@
 
 
 im=imread('C:\Users\Adrien\Documents\GitHub\Australie\Matlab\31 backside.tif');
-% size(im)
+size(im)
 
-min(im(:,:,4))
+min(min(im(:,:,4)))
 % max(im(:,:,4))

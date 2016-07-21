@@ -181,7 +181,7 @@ function pushbutton_loadpath_Callback(hObject, eventdata, handles)
 [NomFic,NomEmp] = uigetfile({'*';'*.jpg';'*.png';'*.bmp'},'Choisissez une image'); % Choisir une image 
 if(NomFic) %if a file has been chosen
     img=(imread(strcat(NomEmp,NomFic)));
- 
+    img=rgb2gray(img(:,:,1:3)); % 1:3 because of problem with tiff image, fourth dimension exist with only 255 in it
     handles.img=img;
     handles.img2=img;
     handles.NomFic=NomFic;
@@ -189,9 +189,9 @@ if(NomFic) %if a file has been chosen
 
     %display image
     axes(handles.axes2)
-    imagesc(img); title(NomFic);
+    imshow(img); title(NomFic);
     axes(handles.axes1)
-    imagesc(img)
+    imshow(img)
     
     %Path
     path2=NomEmp;
@@ -322,9 +322,9 @@ mean_square_error=error*error';
 
 %set title (in nm if pixelrate has been defined, else in pixels)
 try
-title(['Gaussian fit: FWHM=',num2str(2.355*p(4)*handles.pixelrate),'nm   Error=',num2str(mean_square_error)])
+    title(['Gaussian fit: FWHM=',num2str(2.355*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error))])
 catch
-    title(['Gaussian fit: FWHM=',num2str(2.355*p(4)),'pix   Error=',num2str(mean_square_error)])
+    title(['Gaussian fit: FWHM=',num2str(2.355*p(4)),'pix   Error=',num2str(round(mean_square_error))])
 end
 
 
