@@ -181,7 +181,12 @@ function pushbutton_loadpath_Callback(hObject, eventdata, handles)
 [NomFic,NomEmp] = uigetfile({'*';'*.jpg';'*.png';'*.bmp'},'Choisissez une image'); % Choisir une image 
 if(NomFic) %if a file has been chosen
     img=(imread(strcat(NomEmp,NomFic)));
-    img=rgb2gray(img(:,:,1:3)); % 1:3 because of problem with tiff image, fourth dimension exist with only 255 in it
+    s=size(img)
+    if exist('s(3)','var')
+        img=rgb2gray(img(:,:,1:3)); % 1:3 because of problem with tiff image, fourth dimension exist with only 255 in it
+    end
+    
+    
     handles.img=img;
     handles.img2=img;
     handles.NomFic=NomFic;
