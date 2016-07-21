@@ -181,9 +181,10 @@ function pushbutton_loadpath_Callback(hObject, eventdata, handles)
 [NomFic,NomEmp] = uigetfile({'*';'*.jpg';'*.png';'*.bmp'},'Choisissez une image'); % Choisir une image 
 if(NomFic) %if a file has been chosen
     img=(imread(strcat(NomEmp,NomFic)));
-    s=size(img)
-    if exist('s(3)','var')
+    s=size(img);
+    try %if image has multiple arrays
         img=rgb2gray(img(:,:,1:3)); % 1:3 because of problem with tiff image, fourth dimension exist with only 255 in it
+        'conversion en gris'
     end
     
     
