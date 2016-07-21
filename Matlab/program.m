@@ -24,7 +24,7 @@ function varargout = program(varargin)
 
 % Edit the above text to modify the response to help program
 
-% Last Modified by GUIDE v2.5 21-Jul-2016 14:03:05
+% Last Modified by GUIDE v2.5 21-Jul-2016 15:01:11
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -56,11 +56,18 @@ function program_OpeningFcn(hObject, eventdata, handles, varargin)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to program (see VARARGIN)
-'lancement du programme'
+'Lancement du programme'
+
+handles.imageisloaded=0;
 handles.chosen_algorithm=1;
-handles.chosen_process=1;
 handles.folder_cal='No Path Chosen';
 handles.notbusy=1; %If troncature is busy or not during rect
+handles.contrast=0; %best contrast for image
+handles.maxbeforecontrast=255;
+handles.minbeforecontrast=0;
+
+
+
 
 guidata(hObject,handles)
 % Choose default command line output for program
@@ -110,27 +117,31 @@ function pushbutton_tronc_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 %On se place sur la premiere image
-if(handles.notbusy)
-    handles.notbusy=0;
-    guidata(hObject,handles)
-    
-    axes(handles.axes1)
-    img_old=handles.img2; %we save the precedent image, if needed user can go back
+if(handles.imageisloaded)
+    if(handles.notbusy)
+        handles.notbusy=0;
+        guidata(hObject,handles)
 
-    imshow(img_old)
-    rect = round(getrect());
+        axes(handles.axes1)
+        img_old=handles.img2; %we save the precedent image, if needed user can go back
 
-    img2=img_old(rect(2):(rect(2)+rect(4)),rect(1):(rect(1)+rect(3)));
-    axes(handles.axes1)
-    imshow2(img2)
+        imshow(img_old)
+        rect = round(getrect());
 
-    handles.img2=img2;
-    handles.img_old=img_old;
-    handles.notbusy=1;
-    guidata(hObject,handles)
-    
+        img2=img_old(rect(2):(rect(2)+rect(4)),rect(1):(rect(1)+rect(3)));
+        axes(handles.axes1)
+        imshow(img2)
+
+        handles.img2=img2;
+        handles.img_old=img_old;
+        handles.notbusy=1;
+        guidata(hObject,handles)
+
+    end
+else
+     axes(handles.axes1)
+     title('You could load an image before ?')
 end
-
 
 
 
@@ -159,16 +170,55 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in checkbox1.
-function checkbox1_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox1 (see GCBO)
+% --- Set or unset best contrast
+function checkbox_contrast_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox_contrast (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+if(handles.imageisloaded)
+    if(handles.contrast)
+%set old contrast
+        handles.contrast=0;
+        img2=handles.img2;
+        maxi=handles.maxbeforecontrast;
+        mini=handles.minbeforecontrast;
+        img2=uint8((double(img2)*(maxi-mini)/255+mini));
+        axes(handles.axes1)
+        handles.img2=img2;
+        imshow(img2,'DisplayRange',[0 255],'InitialMagnification','fit');
+        
+        guidata(hObject,handles)
+        
+    else
+        %Contrast
+        img2=handles.img2;
 
-figure
-imshow(imread('C:\Users\Adrien\Pictures\clem je lapine3.png'))
+        handles.contrast=1;
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox1
+        temp=double(img2);
+        maxi=max(max(temp));
+        mini=min(min(temp));
+        handles.maxbeforecontrast=maxi;
+        handles.minbeforecontrast=mini;
+        img2=uint8((((temp-mini)*255/(maxi-mini))));
+        
+        axes(handles.axes1)
+        handles.img2=img2;
+        imshow(img2,'DisplayRange',[0 255],'InitialMagnification','fit');
+        
+        guidata(hObject,handles)
+
+
+    end
+    guidata(hObject,handles)
+else
+     axes(handles.axes1)
+     title('You could load an image before ?')
+end
+
+
+
+% Hint: get(hObject,'Value') returns toggle state of checkbox_contrast
 
 
 % Button LOAD
@@ -190,6 +240,14 @@ if(NomFic) %if a file has been chosen
     handles.img=img;
     handles.img2=img;
     handles.NomFic=NomFic;
+    %reset contrast:
+    set(handles.checkbox_contrast,'Value',0)
+    handles.maxbeforecontrast=255;
+    handles.minbeforecontrast=0;
+    
+    
+    handles.contrast=0;
+    handles.imageisloaded=1;
     guidata(hObject,handles)
 
     %display image
@@ -201,6 +259,7 @@ if(NomFic) %if a file has been chosen
     %Path
     path2=NomEmp;
     set(handles.edit_path,'String',path2);
+    
 end
 % guidata(hObject,handles); %sauvegarde le nouveau handle
 % set(handles.edit_path, 'String', handles.folder_cal);
@@ -259,6 +318,8 @@ function pushbutton_reset_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_reset (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+if(handles.imageisloaded)
     handles.img2=handles.img;   
     handles.notbusy=1;
     guidata(hObject,handles)
@@ -268,7 +329,10 @@ function pushbutton_reset_Callback(hObject, eventdata, handles)
     
     axes(handles.axes1)
     imshow(handles.img);
-
+else
+     axes(handles.axes1)
+     title('You could load an image before ?')
+end
 
 
 %USER GIVE THE MAGNIFICATION
@@ -312,39 +376,43 @@ function pushbutton_gauss_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_gauss (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-img2=handles.img2;
-size(img2)
-histo=mean(img2); %histogram of image
-figure
-plot(histo);
-hold on
-x=1:length(histo);
+if(handles.imageisloaded)
+    img2=handles.img2;
+    size(img2)
+    histo=mean(img2); %histogram of image
+    figure
+    plot(histo);
+    hold on
+    x=1:length(histo);
 
-power= handles.lastSliderVal
-p=fit_hgauss(x,histo,power);
-%  p=fit_gauss_2(x,histo);
-fit=p(1)+p(2)*exp(-((x-p(3))./(sqrt(2)*p(4))).^power);
-plot(fit)
-xlabel('pixel')
-error=histo-fit;
-mean_square_error=error*error';
+    power= handles.lastSliderVal
+    p=fit_hgauss(x,histo,power);
+    %  p=fit_gauss_2(x,histo);
+    fit=p(1)+p(2)*exp(-((x-p(3))./(sqrt(2)*p(4))).^power);
+    plot(fit)
+    xlabel('pixel')
+    error=histo-fit;
+    mean_square_error=error*error';
 
-%set title (in nm if pixelrate has been defined, else in pixels)
-if(power==2) %Gaussian fit (not hypergaussian)
-    try
-        title(['Gaussian fit: FWHM=',num2str(2.355*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error))])
-    catch
-        title(['Gaussian fit: FWHM=',num2str(2.355*p(4)),'pix   Error=',num2str(round(mean_square_error))])
+    %set title (in nm if pixelrate has been defined, else in pixels)
+    if(power==2) %Gaussian fit (not hypergaussian)
+        try
+            title(['Gaussian fit: FWHM=',num2str(2.355*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error))])
+        catch
+            title(['Gaussian fit: FWHM=',num2str(2.355*p(4)),'pix   Error=',num2str(round(mean_square_error))])
+        end
+    else
+        try
+            title(['HyperGaussian fit: FWHM=',num2str(2.355*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error)), ' power=',num2str(power)])
+        catch
+            title(['HyperGaussian fit: FWHM=',num2str(2.355*p(4)),'pix   Error=',num2str(round(mean_square_error)),' power=',num2str(power)])
+        end
     end
+
 else
-    try
-        title(['HyperGaussian fit: FWHM=',num2str(2.355*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error)), 'power=',num2str(power)])
-    catch
-        title(['HyperGaussian fit: FWHM=',num2str(2.355*p(4)),'pix   Error=',num2str(round(mean_square_error)),' power=',num2str(power)])
-    end
+     axes(handles.axes1)
+     title('You could load an image before ?')
 end
-    
-
 
 %FWHM -ie half maximum width- is sqrt(ln(256))*sigma so approximately 2.355*sigma
 
@@ -357,22 +425,25 @@ function pushbutton_manual_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_manual (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-try   % will check if pixelrate has been defined (by entering magnification)
-    if(handles.pixelrate) 
+if(handles.imageisloaded)
+    try   % will check if pixelrate has been defined (by entering magnification)
+        if(handles.pixelrate) 
+        end
+        axes(handles.axes1)
+        rect = round(getrect());
+        distance=sqrt(rect(3)*rect(3)+rect(4)*rect(4)) %in pixel
+        distance=distance*handles.pixelrate; %in nm
+        title(['distance = ',num2str(distance),' nm']);
+        handles.distance=distance;
+        guidata(hObject,handles)
+    catch       %pixelrate not defined
+        axes(handles.axes1)
+        title(['Please Set Magnification !']);
     end
-    axes(handles.axes1)
-    rect = round(getrect());
-    distance=sqrt(rect(3)*rect(3)+rect(4)*rect(4)) %in pixel
-    distance=distance*handles.pixelrate; %in nm
-    title(['distance = ',num2str(distance),' nm']);
-    handles.distance=distance;
-    guidata(hObject,handles)
-catch       %pixelrate not defined
-    axes(handles.axes1)
-    title(['Please Set Magnification !']);
+else
+     axes(handles.axes1)
+     title('You could load an image before ?')
 end
-
 
 
 
@@ -382,11 +453,15 @@ function pushbutton_saveimg_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_saveimg (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+if(handles.imageisloaded)
     axes(handles.axes2)
     handles.img=handles.img2; 
     imshow(handles.img)
     guidata(hObject,handles)
-
+else
+     axes(handles.axes1)
+     title('You could load an image before ?')
+end
 
 
 % --- Executes on button press in pushbutton_backimg.
@@ -394,11 +469,15 @@ function pushbutton_backimg_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_backimg (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+if(handles.imageisloaded)
     axes(handles.axes1)
     handles.img2=handles.img_old; %we save the precedent image, if needed user can go back
     imshow(handles.img_old)
     guidata(hObject,handles)
-
+else
+     axes(handles.axes1)
+     title('You could load an image before ?')
+end
 
 
 
@@ -438,7 +517,6 @@ function slider_power_CreateFcn(hObject, eventdata, handles)
  handles.lastSliderVal = 2;
  % Update handles structure
  guidata(hObject, handles);
-
 
 
 
