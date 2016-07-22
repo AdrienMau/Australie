@@ -24,7 +24,7 @@ function varargout = program(varargin)
 
 % Edit the above text to modify the response to help program
 
-% Last Modified by GUIDE v2.5 21-Jul-2016 15:01:11
+% Last Modified by GUIDE v2.5 22-Jul-2016 12:14:46
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -248,6 +248,7 @@ if(NomFic) %if a file has been chosen
     
     handles.contrast=0;
     handles.imageisloaded=1;
+    set(handles.edit_mag,'BackgroundColor',[0.8,0.1,0.1]);
     guidata(hObject,handles)
 
     %display image
@@ -378,7 +379,6 @@ function pushbutton_gauss_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 if(handles.imageisloaded)
     img2=handles.img2;
-    size(img2)
     histo=mean(img2); %histogram of image
     figure
     plot(histo);
@@ -403,9 +403,9 @@ if(handles.imageisloaded)
         end
     else
         try
-            title(['HyperGaussian fit: FWHM=',num2str(2.355*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error)), ' power=',num2str(power)])
+            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error)), ' power=',num2str(power)])
         catch
-            title(['HyperGaussian fit: FWHM=',num2str(2.355*p(4)),'pix   Error=',num2str(round(mean_square_error)),' power=',num2str(power)])
+            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(4)),'pix   Error=',num2str(round(mean_square_error)),' power=',num2str(power)])
         end
     end
 
@@ -415,6 +415,10 @@ else
 end
 
 %FWHM -ie half maximum width- is sqrt(ln(256))*sigma so approximately 2.355*sigma
+%If hypergaussian of power n:
+% FWHM=2sqrt(2)*ln(2)^1/n *sigma =2.8284*(0.6931)^(1/n)*sigma
+
+
 
 % imgauss=p0(1)+p0(2)*exp(-(( x-p0(3)).^2+(y-p0(4)).^2)/(2*p0(5)^2));
 % imshow(imgauss);
@@ -524,3 +528,55 @@ function slider_power_CreateFcn(hObject, eventdata, handles)
 if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
+
+
+% --- _approxgauss2D.
+function pushbutton_approxgauss2d_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_approxgauss2d (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)4
+
+'Approxgauss2D'
+
+if(handles.imageisloaded)
+    img2=handles.img2;
+    size(img2)
+    figure
+subplot(
+    plot(histo);
+    hold on
+    x=1:length(histo);
+
+    power= handles.lastSliderVal
+    p=fit_hgauss(x,histo,power);
+    %  p=fit_gauss_2(x,histo);
+    fit=p(1)+p(2)*exp(-((x-p(3))./(sqrt(2)*p(4))).^power);
+    plot(fit)
+    xlabel('pixel')
+    error=histo-fit;
+    mean_square_error=error*error';
+
+    %set title (in nm if pixelrate has been defined, else in pixels)
+    if(power==2) %Gaussian fit (not hypergaussian)
+        try
+            title(['Gaussian fit: FWHM=',num2str(2.355*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error))])
+        catch
+            title(['Gaussian fit: FWHM=',num2str(2.355*p(4)),'pix   Error=',num2str(round(mean_square_error))])
+        end
+    else
+        try
+            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error)), ' power=',num2str(power)])
+        catch
+            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(4)),'pix   Error=',num2str(round(mean_square_error)),' power=',num2str(power)])
+        end
+    end
+
+else
+     axes(handles.axes1)
+     title('You could load an image before ?')
+end
+
+%FWHM -ie half maximum width- is sqrt(ln(256))*sigma so approximately 2.355*sigma
+%If hypergaussian of power n:
+% FWHM=2sqrt(2)*ln(2)^1/n *sigma =2.8284*(0.6931)^(1/n)*sigma
+

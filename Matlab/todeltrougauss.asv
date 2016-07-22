@@ -1,0 +1,27 @@
+p=fit_trou2D(double(255-img2))
+%   //SORTIE//
+%       p(1) -> offset selon y => A
+%       p(2) -> amplitude
+%       p(3) -> moyenne (horizontale)
+%       p(4) -> moyenne (verticale)
+%       p(5) -> ecart-type
+
+s=size(img2);
+G=zeros(s);
+% i=2;
+%  for(j=1:5)
+%         G(i,j)=(-(1/(2*p(5)*p(5)))*(i-p(4)).^2*(j-p(3)).^2);
+%     end
+
+
+for(i=1:s(1))
+    for(j=1:s(2))
+        G(i,j)=p(1)+p(2)*exp(-(1/(2*p(5)*p(5))) *( ((i-p(4)).^2) + ((j-p(3)).^2)) );
+
+    end
+end
+subplot(2,1,1)
+imshow((255-G))
+
+subplot(1,2,2)
+imshow(img2)
