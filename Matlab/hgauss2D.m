@@ -19,7 +19,6 @@ for(i=1:size(1))
         hgauss(i,j)=p(1)+p(2)*exp(-((1/(sqrt(2)*p(5)) * sqrt((i-p(3)).^2 +(j-p(4)).^2)).^power));
     end
 end
-hgauss(1:5,1:5)
 
 end
 

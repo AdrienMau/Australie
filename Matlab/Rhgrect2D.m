@@ -1,4 +1,4 @@
-function [ R ] = Rhgauss2D(data,p0,dim_h,dim_v,power)
+function [ R ] = Rhgrect2D(data,p0,dim_h,dim_v,power)
 %%Calcule la gaussienne en deux dimensions en utilisant des vecteurs 1D
 %conçu pour être utilisé avec lsqnonlin
 %data est de taille (1,dim_h*dim_v)
@@ -17,7 +17,11 @@ end
 %x vaut 1 sur les dim_h premières cases, 2 entre dim_h+1 et 2*dim_h...
 %y vaut 1 jusqu'à dim_h sur les dim_h premières cases puis repart à 1 etc..
 %%
-      
- r=sqrt((x-p0(3)).^2+(y-p0(4)).^2)/(sqrt(2)*p0(5));
- R=data-p0(1)-p0(2)*exp(-r.^power );
+e=exp(-(( x-p0(3)).^power+(y-p0(4)).^power)/(sqrt(2)*p0(5))^power);
+
+
+ tx=((x-p0(3)).^power)./(sqrt(2)*p0(5))^power;
+ ty=((y-p0(4)).^power)./(sqrt(2)*p0(5))^power;
+ 
+ R=data-p0(1)-p0(2)*exp(-tx-ty );
 end

@@ -17,7 +17,9 @@ end
 %x vaut 1 sur les dim_h premières cases, 2 entre dim_h+1 et 2*dim_h...
 %y vaut 1 jusqu'à dim_h sur les dim_h premières cases puis repart à 1 etc..
 %%
-      
- r=sqrt((x-p0(3)).^2+(y-p0(4)).^2)/(sqrt(2)*p0(5));
+
+
+r=sqrt(()+().^2)
+ 
  R=data-p0(1)-p0(2)*exp(-r.^power );
 end
