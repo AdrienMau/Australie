@@ -1,0 +1,26 @@
+[SLOWSCAN]
+Bitmap=multiplefall-200Loop-6.99pA-DD0.01-LD1800-AD100.bmp
+LowerLeftUV=2.625614,2.657667
+UpperRightUV=2.641453,2.673506
+LocalOriginUV=2.633533,2.665586
+StageUV=2.633533,2.665586
+RotationUV=0
+[METADATA]
+User=Administrator
+Project=%UserRoot%PROJECT\NEW.DSK
+Date=2016/06/30
+Time=15:06:01
+Magnification=6349x
+Write field=16µm
+FoV=15.8µm
+Detector=SE
+Focus/WD=10.300mm
+Probe Current=6.9pA
+Acc. Voltage=35.0kV
+Active Mode=35kV 20µm (8) 6.0pA  (Patterning / 30kV 10µm 0pA)
+Position U=2.6335mm
+Position V=2.6656mm
+Point Average=16
+Average Type=Line averaging
+Average Count=2
+Step Size=0.0309µm

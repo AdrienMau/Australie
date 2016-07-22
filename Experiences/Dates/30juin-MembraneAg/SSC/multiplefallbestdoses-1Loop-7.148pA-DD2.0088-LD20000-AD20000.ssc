@@ -1,0 +1,26 @@
+[SLOWSCAN]
+Bitmap=multiplefallbestdoses-1Loop-7.148pA-DD2.0088-LD20000-AD20000.bmp
+LowerLeftUV=2.629915,2.678277
+UpperRightUV=2.641764,2.690126
+LocalOriginUV=2.635840,2.684202
+StageUV=2.635839,2.684202
+RotationUV=0
+[METADATA]
+User=Administrator
+Project=%UserRoot%PROJECT\NEW.DSK
+Date=2016/06/30
+Time=17:01:22
+Magnification=8487x
+Write field=12µm
+FoV=11.8µm
+Detector=SE
+Focus/WD=10.300mm
+Probe Current=7.1pA
+Acc. Voltage=35.0kV
+Active Mode=35kV 20µm (8) 6.0pA  (Patterning / 30kV 10µm 0pA)
+Position U=2.6358mm
+Position V=2.6842mm
+Point Average=16
+Average Type=Line averaging
+Average Count=2
+Step Size=0.0231µm
