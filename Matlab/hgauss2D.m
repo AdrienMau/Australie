@@ -1,5 +1,5 @@
 function [ hgauss ] = hgauss2D(size,p,power)
-%cree une hypergaussienne rectangulaire en fonction du parametre p, et sur une image de
+%cree une hypergaussienne circulaire en fonction du parametre p, et sur une image de
 %taille size.
 % ENTREE:
 %     size: taille de l'image finale
