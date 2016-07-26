@@ -12,9 +12,31 @@ try
         im=rgb2gray(im);
     end
 end
-subplot(1,1,2)
-imshow(im<median(median(im))/1.4);
-% imshow(im)
+subplot(1,2,1)
+
+maxiter=5;
+iter=0;
+n_holes=5;
+num=0;
+
+%on fait varier le seuil jusqua trouver bien n_holes trous:
+while((iter<maxiter)*(num~=n_holes))
+imbinary=im<median(median(im))/(1+iter/5);
+[L,num]=bwlabel(imbinary);
+iter=iter+1
+end
+
+imshow(L);
+subplot(1,2,2)
+imshow(im)
+
+%detection des contours: avec 'disparition' du maximum
+Histo=max(imbinary);
+i=1:length(Histo)-1;
+contours=(Histo(i)~=Histo(+1))
+% for exemple Histo= [0 0 1 1 1 0 0 a] will give [0 1 0 0 1 0 0 ]
+contours(length(Histo))=0; %same size as Histo now
+
 
 
 % plot(mean(im));
