@@ -4,11 +4,7 @@ function [ p ] = fit_hgauss2D( img,power)
 
 %%%%%
 %On fait un fit gaussienne avec lsqnonlin
-<<<<<<< HEAD
-%   p0: coefficients autours desquels on va chercher la bonne approximation
-=======
 %   p: coefficients autours desquels on va chercher la bonne approximation
->>>>>>> ec544137167e4fbab6a562aecdb54f0a67094900
 %   //SORTIE//
 %       p(1) -> offset selon y => A
 %       p(2) -> amplitude
@@ -16,19 +12,11 @@ function [ p ] = fit_hgauss2D( img,power)
 %       p(4) -> moyenne (horizontale)
 %       p(5) -> ecart-type vertical
 
-<<<<<<< HEAD
-%%
-%Fait appel à lsqnonlin avec construction de jacobienne
-%Nécessite : approxgauss2D.m
-%            Rgauss2D.m
-%            jaco_der.m
-=======
 % power: puissance de l'hypergaussienne
 %%
 %Fait appel à lsqnonlin avec construction de jacobienne
 %Nécessite : 
 %            Rhgauss2D.m
->>>>>>> ec544137167e4fbab6a562aecdb54f0a67094900
 %%
 
 [dim_v,dim_h]=size(img);%nombre de lignes, nombre de colonnes
@@ -71,13 +59,8 @@ for i=1:dim_v
     fline2((i-1)*dim_h+1:i*dim_h)=img(i,:);
 end
 
-<<<<<<< HEAD
-p0 = [ Min, Max-Min, I_h, I_v, (rec(2)-I_v)/sqrt(2*log((2*Max)/(Max-Min))) ];
-
-=======
 % p0 = [ Min, Max-Min, I_h, I_v, (rec(2)-I_v)/sqrt(2*log((2*Max)/(Max-Min))) ]
 p0 = [ Min, Max-Min, I_h, I_v, (rec(2)-I_v)/(2*sqrt(2)*log(2)^(1/power)) ]
->>>>>>> ec544137167e4fbab6a562aecdb54f0a67094900
 % options = optimoptions('lsqnonlin','Jacobian','off'); %a voir pour hgauss...
 % 
 
