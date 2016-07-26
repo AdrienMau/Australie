@@ -1,7 +1,7 @@
 %Select a hole on the image
 %the script gives the parameters of a fitted gaussian
 tic
-
+img=imread('C:\Users\Adrien\Documents\GitHub\Australie\Experiences\All pictures by number of exp\79\79i 03 backside.tif');
 %Loading img (if do not exist)
 if ~exist('img','var')
     % Construction boite dialogue pour choisir l'image

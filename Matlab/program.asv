@@ -541,19 +541,19 @@ function pushbutton_approxgauss2d_Callback(hObject, eventdata, handles)
 if(handles.imageisloaded)
     img2=double(handles.img2);
     s=size(img2);
-    figure
-    subplot(2,1,1)
-    imshow2(img2)
+figure
+subplot(2,1,1)
+imshow2(img2)
 
-    subplot(2,1,2)
-    power= handles.lastSliderVal;
-    s=size(img2)
+subplot(2,1,2)
+power= handles.lastSliderVal;
+s=size(img2)
 
-    p=fit_hgauss2D(double(255-img2),power)
-    G=hgauss2D(s,p,power);
-    imshow2(255-G)
-    error=reshape(G-img2,1,s(1)*s(2)); %column with differences value-fit
-    mean_square_error=(error*error')/length(error);
+p=fit_hgauss2D(double(255-img2),power)
+G=hgauss2D(s,p,power);
+imshow2(255-G)
+error=reshape(G-img2,1,s(1)*s(2)); %column with differences value-fit
+mean_square_error=(error*error')/length(error);
 
     %set title (in nm if pixelrate has been defined, else in pixels)
     if(power==2) %Gaussian fit (not hypergaussian)
