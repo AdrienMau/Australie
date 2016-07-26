@@ -46,7 +46,8 @@ free=0;
 max_enlarge=4;
 j=zeros(2,nholes) % store the coordinates of
 for(j=1:length(position_contours))
-    if(position_contours) %
+    if(position_contours) %detect an edge
+        inside_hole=(inside_hole==1)
         
     
     end
