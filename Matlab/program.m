@@ -542,18 +542,6 @@ if(handles.imageisloaded)
     img2=double(handles.img2);
     s=size(img2);
     figure
-<<<<<<< HEAD
-    subplot(2,1,1)
-    imshow2(img2)
-
-    subplot(2,1,2)
-    power= handles.lastSliderVal;
-    s=size(img2)
-
-    p=fit_hgauss2D(double(255-img2),power)
-    G=hgauss2D(s,p,power);
-    imshow2(255-G)
-=======
     subplot(2,2,1)
     imshow2(img2)
 title('original image')
@@ -569,27 +557,12 @@ title('original image')
     
     G=hgauss2D(s,p,power);
     imshow2(G)
->>>>>>> ec544137167e4fbab6a562aecdb54f0a67094900
     error=reshape(G-img2,1,s(1)*s(2)); %column with differences value-fit
     mean_square_error=(error*error')/length(error);
 
     %set title (in nm if pixelrate has been defined, else in pixels)
     if(power==2) %Gaussian fit (not hypergaussian)
         try
-<<<<<<< HEAD
-            title(['Gaussian fit: FWHM=',num2str(2.355*p(5)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error))])
-        catch
-            title(['Gaussian fit: FWHM=',num2str(2.355*p(5)),'pix   Error=',num2str(round(mean_square_error))])
-        end
-    else
-        try
-            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(5)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error)), ' power=',num2str(power)])
-        catch
-            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(5)),'pix   Error=',num2str(round(mean_square_error)),' power=',num2str(power)])
-        end
-    end
-
-=======
             title({['Gaussian fit: FWHM=',num2str(2.355*p(5)*handles.pixelrate),'nm'] ; [ ' MSE=',num2str(round(mean_square_error))]})
         catch
             title({['Gaussian fit: FWHM=',num2str(2.355*p(5)),'pix'];[' MSE=',num2str(round(mean_square_error))]})
@@ -622,7 +595,6 @@ title('original image')
 %     p(3)
 
     
->>>>>>> ec544137167e4fbab6a562aecdb54f0a67094900
 else
      axes(handles.axes1)
      title('You could load an image before ?')

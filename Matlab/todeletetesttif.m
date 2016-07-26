@@ -13,7 +13,14 @@ try
     end
 end
 subplot(1,2,1)
-imshow(im<median(median(im))/1.4);
+
+maxiter=5;
+iter=0;
+n_holes=
+while((iter<maxiter)*(num~=n_holes)
+imbinary=im<median(median(im))/1.4;
+[L,num]=bwlabel(imbinary);
+imshow(L);
 subplot(1,2,2)
 imshow(im)
 
