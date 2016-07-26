@@ -542,6 +542,7 @@ if(handles.imageisloaded)
     img2=double(handles.img2);
     s=size(img2);
     figure
+<<<<<<< HEAD
     subplot(2,1,1)
     imshow2(img2)
 
@@ -552,12 +553,30 @@ if(handles.imageisloaded)
     p=fit_hgauss2D(double(255-img2),power)
     G=hgauss2D(s,p,power);
     imshow2(255-G)
+=======
+    subplot(2,2,1)
+    imshow2(img2)
+title('original image')
+    subplot(2,2,3)
+    power= handles.lastSliderVal;
+
+%Gaussian Fit:
+%     p=fit_hgauss2D((255-img2),power) %hgauss2D is for rising gaussians, not 'U' or 'hole' like
+%     p(1)=255-p(1);
+%     p(2)=-p(2);
+    %or:
+    p=fit_hgauss2D_neg(img2,power);
+    
+    G=hgauss2D(s,p,power);
+    imshow2(G)
+>>>>>>> ec544137167e4fbab6a562aecdb54f0a67094900
     error=reshape(G-img2,1,s(1)*s(2)); %column with differences value-fit
     mean_square_error=(error*error')/length(error);
 
     %set title (in nm if pixelrate has been defined, else in pixels)
     if(power==2) %Gaussian fit (not hypergaussian)
         try
+<<<<<<< HEAD
             title(['Gaussian fit: FWHM=',num2str(2.355*p(5)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error))])
         catch
             title(['Gaussian fit: FWHM=',num2str(2.355*p(5)),'pix   Error=',num2str(round(mean_square_error))])
@@ -570,6 +589,40 @@ if(handles.imageisloaded)
         end
     end
 
+=======
+            title({['Gaussian fit: FWHM=',num2str(2.355*p(5)*handles.pixelrate),'nm'] ; [ ' MSE=',num2str(round(mean_square_error))]})
+        catch
+            title({['Gaussian fit: FWHM=',num2str(2.355*p(5)),'pix'];[' MSE=',num2str(round(mean_square_error))]})
+        end
+    else
+        try
+            title({['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(5)*handles.pixelrate),'nm'];['   MSE=',num2str(round(mean_square_error)), ' power=',num2str(power)]})
+        catch
+            title({['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(5)),'pix'];[  ' MSE=',num2str(round(mean_square_error)),' power=',num2str(power)]})
+        end
+    end
+
+    
+%     img2(1:5,1:5)
+%     G(1:5,1:5)
+    coupeX=(img2(round(p(3)),:));
+    coupeY=(img2(:,round(p(4))));
+    subplot(2,2,2)
+    plot(coupeX)
+    hold on
+    plot(G(round(p(3)),:))
+    title('x profile')
+    
+    subplot(2,2,4)
+    plot(coupeY)
+    hold on
+    plot(G(:,round(p(4))))
+    title('y profile')
+    
+%     p(3)
+
+    
+>>>>>>> ec544137167e4fbab6a562aecdb54f0a67094900
 else
      axes(handles.axes1)
      title('You could load an image before ?')
