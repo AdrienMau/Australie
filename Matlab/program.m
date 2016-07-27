@@ -24,7 +24,7 @@ function varargout = program(varargin)
 
 % Edit the above text to modify the response to help program
 
-% Last Modified by GUIDE v2.5 27-Jul-2016 13:19:32
+% Last Modified by GUIDE v2.5 27-Jul-2016 19:09:22
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -91,9 +91,9 @@ function varargout = program_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 
-% --- Executes on button press in pushbutton_useless. CREATION CAL
-function pushbutton_useless_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton_useless (see GCBO)
+% --- Executes on button press in pushbutton_ApproxGo. CREATION CAL
+function pushbutton_ApproxGo_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_ApproxGo (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -553,57 +553,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','red');
 end
 
-
-% --- APPROXGAUSS
-function pushbutton_gauss_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton_gauss (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-if(handles.imageisloaded)
-    img2=handles.img2;
-    histo=mean(img2); %histogram of image
-    figure
-    plot(histo);
-    hold on
-    x=1:length(histo);
-
-    power= handles.lastSliderVal
-    p=fit_hgauss(x,histo,power);
-    %  p=fit_gauss_2(x,histo);
-    fit=p(1)+p(2)*exp(-((x-p(3))./(sqrt(2)*p(4))).^power);
-    plot(fit)
-    xlabel('pixel')
-    error=histo-fit;
-        mean_square_error=(error*error')/length(error);
-
-    %set title (in nm if pixelrate has been defined, else in pixels)
-    if(power==2) %Gaussian fit (not hypergaussian)
-        try
-            title(['Gaussian fit: FWHM=',num2str(2.355*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error))])
-        catch
-            title(['Gaussian fit: FWHM=',num2str(2.355*p(4)),'pix   Error=',num2str(round(mean_square_error))])
-        end
-    else
-        try
-            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error)), ' power=',num2str(power)])
-        catch
-            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(4)),'pix   Error=',num2str(round(mean_square_error)),' power=',num2str(power)])
-        end
-    end
-
-else
-     axes(handles.axes1)
-     title('You could load an image before ?')
-end
-
-%FWHM -ie half maximum width- is sqrt(ln(256))*sigma so approximately 2.355*sigma
-%If hypergaussian of power n:
-% FWHM=2sqrt(2)*ln(2)^1/n *sigma =2.8284*(0.6931)^(1/n)*sigma
-
-
-
-% imgauss=p0(1)+p0(2)*exp(-(( x-p0(3)).^2+(y-p0(4)).^2)/(2*p0(5)^2));
-% imshow(imgauss);
 
 % --- Executes on button press in pushbutton_manual.
 %User choose two points and receive the distance in nm between them.
