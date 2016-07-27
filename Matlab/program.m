@@ -24,7 +24,7 @@ function varargout = program(varargin)
 
 % Edit the above text to modify the response to help program
 
-% Last Modified by GUIDE v2.5 27-Jul-2016 11:25:12
+% Last Modified by GUIDE v2.5 22-Jul-2016 12:14:46
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -603,3 +603,4 @@ end
 %FWHM -ie half maximum width- is sqrt(ln(256))*sigma so approximately 2.355*sigma
 %If hypergaussian of power n:
 % FWHM=2sqrt(2)*ln(2)^1/n *sigma =2.8284*(0.6931)^(1/n)*sigma
+
