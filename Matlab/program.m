@@ -24,7 +24,7 @@ function varargout = program(varargin)
 
 % Edit the above text to modify the response to help program
 
-% Last Modified by GUIDE v2.5 22-Jul-2016 12:14:46
+% Last Modified by GUIDE v2.5 27-Jul-2016 13:19:32
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -91,19 +91,178 @@ function varargout = program_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 
-% --- Executes on button press in pushbutton2. CREATION CAL
-function pushbutton2_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton2 (see GCBO)
+% --- Executes on button press in pushbutton_useless. CREATION CAL
+function pushbutton_useless_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_useless (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 if(handles.chosen_algorithm==1)
-    'Lancement de l''algorithme 1'
+    'Lancement de l''algorithme 1: ApproxGauss'
+if(handles.imageisloaded)
+    img2=handles.img2;
+    histo=mean(img2); %histogram of image
+    figure
+    plot(histo);
+    hold on
+    x=1:length(histo);
+
+    power= handles.lastSliderVal
+    p=fit_hgauss(x,histo,power);
+    %  p=fit_gauss_2(x,histo);
+    fit=p(1)+p(2)*exp(-((x-p(3))./(sqrt(2)*p(4))).^power);
+    plot(fit)
+    xlabel('pixel')
+    error=histo-fit;
+        mean_square_error=(error*error')/length(error);
+
+    %set title (in nm if pixelrate has been defined, else in pixels)
+    if(power==2) %Gaussian fit (not hypergaussian)
+        try
+            title(['Gaussian fit: FWHM=',num2str(2.355*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error))])
+        catch
+            title(['Gaussian fit: FWHM=',num2str(2.355*p(4)),'pix   Error=',num2str(round(mean_square_error))])
+        end
+    else
+        try
+            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error)), ' power=',num2str(power)])
+        catch
+            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(4)),'pix   Error=',num2str(round(mean_square_error)),' power=',num2str(power)])
+        end
+    end
+
+else
+     axes(handles.axes1)
+     title('You could load an image before ?')
+end
+%FWHM -ie half maximum width- is sqrt(ln(256))*sigma so approximately 2.355*sigma
+%If hypergaussian of power n:
+% FWHM=2sqrt(2)*ln(2)^1/n *sigma =2.8284*(0.6931)^(1/n)*sigma
+
+
+
 elseif(handles.chosen_algorithm==2)
-    'Lancement de l''algorithme 2'
-elseif(handles.chosen_algorithm==3)
+
+    'Lancement de l''algorithme 2: ApproxGauss, automatic best power'
+if(handles.imageisloaded)
+
+    img2=handles.img2;
+    histo=mean(img2); %histogram of image
+    figure
+    plot(histo);
+    hold on
+    x=1:length(histo);
+
+
+%search best power for fit
+	chosen_p=zeros(1,5)
+  	best_pow=2;
+	minimalerror=Inf;
+for(power=2:2:10)
+    p=fit_hgauss(x,histo,power);
+    fit=p(1)+p(2)*exp(-((x-p(3))./(sqrt(2)*p(4))).^power);
+    error=histo-fit;
+    mean_square_error=(error*error')/length(error);
+	if(mean_square_error<minimalerror)
+		best_pow=power;
+		minimalerror=mean_square_error
+		chosen_p=p;
+	end
+end
+
+power=best_pow;
+fit=chosen_p(1)+chosen_p(2)*exp(-((x-chosen_p(3))./(sqrt(2)*chosen_p(4))).^power);
+
+    plot(fit)
+    xlabel('pixel')
+
+    %set title (in nm if pixelrate has been defined, else in pixels)
+    if(power==2) %Gaussian fit (not hypergaussian)
+        try
+            title(['Gaussian fit: FWHM=',num2str(2.355*chosen_p(4)*handles.pixelrate),'nm   Error=',num2str(round(minimalerror))])
+        catch
+            title(['Gaussian fit: FWHM=',num2str(2.355*chosen_p(4)),'pix   Error=',num2str(round(minimalerror))])
+        end
+    else
+        try
+            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)*handles.pixelrate),'nm   Error=',num2str(round(minimalerror)), ' power=',num2str(power)])
+        catch
+            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)),'pix   Error=',num2str(round(minimalerror)),' power=',num2str(power)])
+        end
+    end
+
+else
+     axes(handles.axes1)
+     title('You could load an image before ?')
+end
+
+%FWHM -ie half maximum width- is sqrt(ln(256))*sigma so approximately 2.355*sigma
+%If hypergaussian of power n:
+% FWHM=2sqrt(2)*ln(2)^1/n *sigma =2.8284*(0.6931)^(1/n)*sigma
+
+
+
+% imgauss=p0(1)+p0(2)*exp(-(( x-p0(3)).^2+(y-p0(4)).^2)/(2*p0(5)^2));
+% imshow(imgauss);
+
+					elseif(handles.chosen_algorithm==3)
     'Lancement de l''algorithme 3'
+
+
+
+maxiter=10;
+
+iter=0;
+n_holes=5;
+% n_holes=get();
+num=0;
+im_med=median(median(im));
+%on fait varier le seuil jusqua trouver n_holes trous:
+while((iter<maxiter)*(num~=n_holes))
+	imbinary=im<im_med/(1+iter/5);
+	[L,num]=bwlabel(imbinary);
+	iter=iter+1
+end
+subplot(1,2,1)
+imshow(L);
+subplot(1,2,2)
+imshow(im)
+
+%detection des contours: quand il n'y a pas de '1' sur une colonne
+Histo=max(imbinary);
+i=1:length(Histo)-1;
+contours=(Histo(i)~=Histo(i+1))
+% for exemple Histo= [0 0 1 1 1 0 0 a] will give contours=[0 1 0 0 1 0 0 ]
+position_contours=contours.*i; % give 0 2 0 0 5 0 0
+
+edge_positions=zeros(2,n_holes)
+detect_left=1;
+holenumber=1;
+shift=2;
+for(i=1:length(Histo)-1)
+	if(position_contours(i))
+		if(detect_left)
+			detect_left=0;
+			edge_positions(1,holenumber)=position_contours(i)-shift;
+		else
+			detect_left=1;	
+			edge_positions(2,holenumber)=position_contours(i)+shift;
+			holenumber=holenumber+1;
+		end
+	end
+end
+
+
+%
+
+
+
 else 'Erreur: l''algorithme choisi n''est pas entier';
+
+
+
+
+
 
 
 end
@@ -127,6 +286,15 @@ if(handles.imageisloaded)
 
         imshow(img_old)
         rect = round(getrect());
+
+%verify size
+s=size(img_old)
+	if(rect(2)+rect(4)>s(1))
+	rect(4)=s(1)-rect(2);
+	end
+	if(rect(1)+rect(3)>s(2))
+	rect(3)=s(2)-rect(1);
+	end
 
         img2=img_old(rect(2):(rect(2)+rect(4)),rect(1):(rect(1)+rect(3)));
         axes(handles.axes1)
@@ -227,7 +395,11 @@ function pushbutton_loadpath_Callback(hObject, eventdata, handles)
 % handles.folder_cal=uigetdir;
 % guidata(hObject,handles); %sauvegarde le nouveau handle
 % set(handles.edit_path, 'String', handles.folder_cal);
+try
+[NomFic,NomEmp] = uigetfile({'*';'*.jpg';'*.png';'*.bmp'},'Choisissez une image',get(handles.edit_path,'String')); % Choisir une image 
+catch
 [NomFic,NomEmp] = uigetfile({'*';'*.jpg';'*.png';'*.bmp'},'Choisissez une image'); % Choisir une image 
+end
 if(NomFic) %if a file has been chosen
     img=(imread(strcat(NomEmp,NomFic)));
     s=size(img);
@@ -256,7 +428,17 @@ if(NomFic) %if a file has been chosen
     imshow(img); title(NomFic);
     axes(handles.axes1)
     imshow(img)
-    
+    axes(handles.axes_mag)
+    s=size(img) %already done ?
+if(s(1)>70)
+    im_mag=img(s(1)-70:s(1),round(s(2)/2):s(2));
+else
+    im_mag=img(1:s(1),round(s(2)/2):s(2));
+end
+    imshow(im_mag);
+    title('Mag');
+
+	addpath(NomEmp)
     %Path
     path2=NomEmp;
     set(handles.edit_path,'String',path2);
