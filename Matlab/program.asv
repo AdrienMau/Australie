@@ -24,7 +24,7 @@ function varargout = program(varargin)
 
 % Edit the above text to modify the response to help program
 
-% Last Modified by GUIDE v2.5 27-Jul-2016 13:19:32
+% Last Modified by GUIDE v2.5 01-Aug-2016 18:10:14
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -91,9 +91,9 @@ function varargout = program_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 
-% --- Executes on button press in pushbutton_useless. CREATION CAL
-function pushbutton_useless_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton_useless (see GCBO)
+% --- Executes on button press in pushbutton_ApproxGo. CREATION CAL
+function pushbutton_ApproxGo_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_ApproxGo (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -155,7 +155,7 @@ if(handles.imageisloaded)
 
 
 %search best power for fit
-	chosen_p=zeros(1,5)
+	chosen_p=zeros(1,5);
   	best_pow=2;
 	minimalerror=Inf;
 for(power=2:2:10)
@@ -204,18 +204,17 @@ end
 
 % imgauss=p0(1)+p0(2)*exp(-(( x-p0(3)).^2+(y-p0(4)).^2)/(2*p0(5)^2));
 % imshow(imgauss);
-
-					elseif(handles.chosen_algorithm==3)
+    
+elseif(handles.chosen_algorithm==3)
     'Lancement de l''algorithme 3'
 
 
-
 maxiter=10;
-
 iter=0;
-n_holes=5;
+n_holes=handles.n_holes
 % n_holes=get();
 num=0;
+im=handles.img2;
 im_med=median(median(im));
 %on fait varier le seuil jusqua trouver n_holes trous:
 while((iter<maxiter)*(num~=n_holes))
@@ -223,6 +222,7 @@ while((iter<maxiter)*(num~=n_holes))
 	[L,num]=bwlabel(imbinary);
 	iter=iter+1
 end
+figure
 subplot(1,2,1)
 imshow(L);
 subplot(1,2,2)
@@ -231,29 +231,99 @@ imshow(im)
 %detection des contours: quand il n'y a pas de '1' sur une colonne
 Histo=max(imbinary);
 i=1:length(Histo)-1;
-contours=(Histo(i)~=Histo(i+1))
+contours=(Histo(i)~=Histo(i+1));
 % for exemple Histo= [0 0 1 1 1 0 0 a] will give contours=[0 1 0 0 1 0 0 ]
 position_contours=contours.*i; % give 0 2 0 0 5 0 0
+position_contours(position_contours==0)=[]; %DELETE THE 0s
+edge_positions=reshape(position_contours,[2 n_holes]);
 
-edge_positions=zeros(2,n_holes)
-detect_left=1;
-holenumber=1;
-shift=2;
-for(i=1:length(Histo)-1)
-	if(position_contours(i))
-		if(detect_left)
-			detect_left=0;
-			edge_positions(1,holenumber)=position_contours(i)-shift;
-		else
-			detect_left=1;	
-			edge_positions(2,holenumber)=position_contours(i)+shift;
-			holenumber=holenumber+1;
-		end
-	end
+%or
+% detect_left=1;
+% holenumber=1;
+% shift=2;
+% for(i=1:length(Histo)-1)
+% 	if(position_contours(i))
+% 		if(detect_left)
+% 			detect_left=0;
+% 			edge_positions(1,holenumber)=position_contours(i)-shift;
+% 		else
+% 			detect_left=1;	
+% 			edge_positions(2,holenumber)=position_contours(i)+shift;
+% 			holenumber=holenumber+1;
+% 		end
+% 	end
+% end
+
+%We cut the image in n_holes images containing the hole
+% We make the automatic best fit
+radius=3; %we will do approxgauss on a X*radius image
+img_for_user=im; %to show which regions have been selected
+for(n=1:n_holes)
+    imcutbinary=imbinary(:,edge_positions(1,n):edge_positions(2,n));
+    Histoy=max(imcutbinary');
+    L=length(Histoy);
+    i=1:L-1;
+    contoursy=(Histoy(i)~=Histoy(i+1));
+    position_contours_y=contoursy.*i;
+    position_contours_y(position_contours_y==0)=[];
+    middle=(position_contours_y(1)+position_contours_y(2))/2;
+    img=im(max(0,round(middle-radius/2)):min(L,round(middle+radius/2)),edge_positions(1,n):edge_positions(2,n)); %tronq image
+    subplot(2,n_holes,n)
+    imshow(img)
+    title(['Hole # ',num2str(n)])
+        
+    %Now we have the cutted image, we proceed with fit:
+    
+
+    subplot(2,n_holes,n+n_holes)
+    histo=mean(img); %histogram of image
+    plot(histo);
+    hold on
+    x=1:length(histo);
+
+%search best power for fit
+	chosen_p=zeros(1,5); %5: the five parameters for p
+  	best_pow=2;
+	minimalerror=Inf;
+    for(power=2:2:10)
+        p=fit_hgauss(x,histo,power);
+        fit=p(1)+p(2)*exp(-((x-p(3))./(sqrt(2)*p(4))).^power);
+        error=histo-fit;
+        mean_square_error=(error*error')/length(error);
+        if(mean_square_error<minimalerror)
+            best_pow=power;
+            minimalerror=mean_square_error;
+            chosen_p=p;
+        end
+    end
+
+    power=best_pow;
+    fit=chosen_p(1)+chosen_p(2)*exp(-((x-chosen_p(3))./(sqrt(2)*chosen_p(4))).^power);
+
+    plot(fit)
+    xlabel('pixel')
+
+    %set title (in nm if pixelrate has been defined, else in pixels)
+    if(power==2) %Gaussian fit (not hypergaussian)
+        try
+            title(['Gaussian fit: FWHM=',num2str(2.355*chosen_p(4)*handles.pixelrate),'nm   Error=',num2str(round(minimalerror))])
+        catch
+            title(['Gaussian fit: FWHM=',num2str(2.355*chosen_p(4)),'pix   Error=',num2str(round(minimalerror))])
+        end
+    else
+        try
+            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)*handles.pixelrate),'nm   Error=',num2str(round(minimalerror)), ' power=',num2str(power)])
+        catch
+            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)),'pix   Error=',num2str(round(minimalerror)),' power=',num2str(power)])
+        end
+    end
+
 end
 
 
-%
+% ecart_final=3; %will take 3 or 4 thick -images to do the gaussian fit
+% shift=floor(max(0,(edge_positions(2,:)-ecart_final-edge_positions(1,:))/2))
+% shifted_positions=[edge_positions(1,:)+shift;edge_positions(2,:)-shift]
 
 
 
@@ -554,57 +624,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- APPROXGAUSS
-function pushbutton_gauss_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton_gauss (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-if(handles.imageisloaded)
-    img2=handles.img2;
-    histo=mean(img2); %histogram of image
-    figure
-    plot(histo);
-    hold on
-    x=1:length(histo);
-
-    power= handles.lastSliderVal
-    p=fit_hgauss(x,histo,power);
-    %  p=fit_gauss_2(x,histo);
-    fit=p(1)+p(2)*exp(-((x-p(3))./(sqrt(2)*p(4))).^power);
-    plot(fit)
-    xlabel('pixel')
-    error=histo-fit;
-        mean_square_error=(error*error')/length(error);
-
-    %set title (in nm if pixelrate has been defined, else in pixels)
-    if(power==2) %Gaussian fit (not hypergaussian)
-        try
-            title(['Gaussian fit: FWHM=',num2str(2.355*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error))])
-        catch
-            title(['Gaussian fit: FWHM=',num2str(2.355*p(4)),'pix   Error=',num2str(round(mean_square_error))])
-        end
-    else
-        try
-            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error)), ' power=',num2str(power)])
-        catch
-            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(4)),'pix   Error=',num2str(round(mean_square_error)),' power=',num2str(power)])
-        end
-    end
-
-else
-     axes(handles.axes1)
-     title('You could load an image before ?')
-end
-
-%FWHM -ie half maximum width- is sqrt(ln(256))*sigma so approximately 2.355*sigma
-%If hypergaussian of power n:
-% FWHM=2sqrt(2)*ln(2)^1/n *sigma =2.8284*(0.6931)^(1/n)*sigma
-
-
-
-% imgauss=p0(1)+p0(2)*exp(-(( x-p0(3)).^2+(y-p0(4)).^2)/(2*p0(5)^2));
-% imshow(imgauss);
-
 % --- Executes on button press in pushbutton_manual.
 %User choose two points and receive the distance in nm between them.
 function pushbutton_manual_Callback(hObject, eventdata, handles)
@@ -786,3 +805,43 @@ end
 %If hypergaussian of power n:
 % FWHM=2sqrt(2)*ln(2)^1/n *sigma =2.8284*(0.6931)^(1/n)*sigma
 
+
+
+% USER GIVE N_HOLES TO SEARCH WITH APPROXGAUSS FULL AUTO
+function edit_nholesforApproxg_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_nholesforApproxg (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_nholesforApproxg as text
+%        str2double(get(hObject,'String')) returns contents of edit_nholesforApproxg as a double
+n_holes=str2double(get(hObject,'String'));
+if isnan(n_holes) %not va valid number
+    set(handles.edit_nholesforApproxg,'String','x');
+    handles.n_holes=0;
+    set(hObject,'BackgroundColor','red')
+    set(handles.text_taux,'String','Maybe try a number?');
+else %set new n_holes
+    handles.n_holes=str2double(get(hObject,'String'));
+    set(hObject,'BackgroundColor','white')
+    pause(0.05)
+    set(hObject,'BackgroundColor','green')
+end
+guidata(hObject,handles)
+
+
+
+
+% --- Executes during object creation, after setting all properties.
+function edit_nholesforApproxg_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_nholesforApproxg (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+
+
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
