@@ -24,7 +24,7 @@ function varargout = program(varargin)
 
 % Edit the above text to modify the response to help program
 
-% Last Modified by GUIDE v2.5 01-Aug-2016 18:10:14
+% Last Modified by GUIDE v2.5 02-Aug-2016 17:09:05
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -125,9 +125,9 @@ if(handles.imageisloaded)
         end
     else
         try
-            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error)), ' power=',num2str(power)])
+            title({['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(4)*handles.pixelrate),'nm'];['Error=',num2str(round(mean_square_error)), ' power=',num2str(power)]})
         catch
-            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(4)),'pix   Error=',num2str(round(mean_square_error)),' power=',num2str(power)])
+            title({['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*p(4)),'pix'];[ 'Error=',num2str(round(mean_square_error)),' power=',num2str(power)]})
         end
     end
 
@@ -185,9 +185,9 @@ fit=chosen_p(1)+chosen_p(2)*exp(-((x-chosen_p(3))./(sqrt(2)*chosen_p(4))).^power
         end
     else
         try
-            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)*handles.pixelrate),'nm   Error=',num2str(round(minimalerror)), ' power=',num2str(power)])
+            title({['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)*handles.pixelrate),'nm'];['Error=',num2str(round(minimalerror)), ' power=',num2str(power)]})
         catch
-            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)),'pix   Error=',num2str(round(minimalerror)),' power=',num2str(power)])
+            title({['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)),'pix'];['Error=',num2str(round(minimalerror)),' power=',num2str(power)]})
         end
     end
 
@@ -207,20 +207,22 @@ end
     
 elseif(handles.chosen_algorithm==3)
     'Lancement de l''algorithme 3'
+%TO do: check if image is loaded
 
-
-maxiter=10;
+maxiter=50;
 iter=0;
-n_holes=handles.n_holes
+n_holes=handles.n_holes;
 % n_holes=get();
 num=0;
 im=handles.img2;
 im_med=median(median(im));
 %on fait varier le seuil jusqua trouver n_holes trous:
+%threshold change until we find the good number of hole (we always
+%decrease, so we may pass the good threshold => improvement...)
 while((iter<maxiter)*(num~=n_holes))
 	imbinary=im<im_med/(1+iter/5);
 	[L,num]=bwlabel(imbinary);
-	iter=iter+1
+	iter=iter+1;
 end
 figure
 subplot(1,2,1)
@@ -233,9 +235,18 @@ Histo=max(imbinary);
 i=1:length(Histo)-1;
 contours=(Histo(i)~=Histo(i+1));
 % for exemple Histo= [0 0 1 1 1 0 0 a] will give contours=[0 1 0 0 1 0 0 ]
-position_contours=contours.*i; % give 0 2 0 0 5 0 0
-position_contours(position_contours==0)=[]; %DELETE THE 0s
+position_contours=contours.*i % give 0 2 0 0 5 0 0
+position_contours(position_contours==0)=[] %DELETE THE 0s
 edge_positions=reshape(position_contours,[2 n_holes]);
+edge_positions(2,:)=min(length(Histo),edge_positions(2,:)+1);
+
+
+%eventually we can horizontally enlarge the chosen area with:
+radius_x=1;
+edge_positions(1,:)=max(0,edge_positions(1,:)-radius_x);
+edge_positions(2,:)=min(length(Histo),edge_positions(2,:)+radius_x);
+% problem?
+
 
 %or
 % detect_left=1;
@@ -258,6 +269,7 @@ edge_positions=reshape(position_contours,[2 n_holes]);
 % We make the automatic best fit
 radius=3; %we will do approxgauss on a X*radius image
 img_for_user=im; %to show which regions have been selected
+figure
 for(n=1:n_holes)
     imcutbinary=imbinary(:,edge_positions(1,n):edge_positions(2,n));
     Histoy=max(imcutbinary');
@@ -306,20 +318,28 @@ for(n=1:n_holes)
     %set title (in nm if pixelrate has been defined, else in pixels)
     if(power==2) %Gaussian fit (not hypergaussian)
         try
-            title(['Gaussian fit: FWHM=',num2str(2.355*chosen_p(4)*handles.pixelrate),'nm   Error=',num2str(round(minimalerror))])
+            title({['Gaussian fit: FWHM=',num2str(2.355*chosen_p(4)*handles.pixelrate),'nm'];['Error=',num2str(round(minimalerror))]})
         catch
-            title(['Gaussian fit: FWHM=',num2str(2.355*chosen_p(4)),'pix   Error=',num2str(round(minimalerror))])
+            title({['Gaussian fit: FWHM=',num2str(2.355*chosen_p(4)),'pix'];['Error=',num2str(round(minimalerror))]})
         end
     else
         try
-            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)*handles.pixelrate),'nm   Error=',num2str(round(minimalerror)), ' power=',num2str(power)])
+            title({['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)*handles.pixelrate),'nm'];['Error=',num2str(round(minimalerror)), ' power=',num2str(power)]})
         catch
-            title(['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)),'pix   Error=',num2str(round(minimalerror)),' power=',num2str(power)])
+            title({['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)),'pix' ];[  'Error=',num2str(round(minimalerror)),' power=',num2str(power)]})
         end
     end
 
+    
+    
+    %finally, we will make a visible rectangle for user:
+    img_for_user(max(0,round(middle-radius/2)),edge_positions(1,n):edge_positions(2,n))=255-n;
+    img_for_user(min(L,round(middle+radius/2)),edge_positions(1,n):edge_positions(2,n))=255-n;
+    img_for_user(max(0,round(middle-radius/2)):min(L,round(middle+radius/2)),edge_positions(1,n))=255-n;
+    img_for_user(max(0,round(middle-radius/2)):min(L,round(middle+radius/2)),edge_positions(2,n))=255-n;
 end
-
+figure
+imshow(img_for_user)
 
 % ecart_final=3; %will take 3 or 4 thick -images to do the gaussian fit
 % shift=floor(max(0,(edge_positions(2,:)-ecart_final-edge_positions(1,:))/2))
@@ -841,6 +861,72 @@ function edit_nholesforApproxg_CreateFcn(hObject, eventdata, handles)
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 
+
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit_xplus_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_xplus (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_xplus as text
+%        str2double(get(hObject,'String')) returns contents of edit_xplus as a double
+x_plus=str2double(get(hObject,'String'));
+if isnan(x_plus) %not va valid number
+    set(handles.edit_xplus,'String','x');
+    handles.xplus=0;
+    set(hObject,'BackgroundColor','red')
+else %set new n_holes
+    handles.xplus=str2double(get(hObject,'String'));
+    set(hObject,'BackgroundColor','white')
+    pause(0.05)
+    set(hObject,'BackgroundColor','green')
+end
+guidata(hObject,handles)
+
+% --- Executes during object creation, after setting all properties.
+function edit_xplus_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_xplus (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+
+handles.xplus=2
+set(hObject,'String',num2str(handles.yplus));
+guidata(hObject,handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit_yplus_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_yplus (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_yplus as text
+%        str2double(get(hObject,'String')) returns contents of edit_yplus as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit_yplus_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_yplus (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+
+handles.yplus=2
+set(hObject,'String',num2str(handles.yplus));
+guidata(hObject,handles)
 
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
