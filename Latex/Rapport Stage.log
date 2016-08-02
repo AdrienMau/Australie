@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.1.14)  1 AUG 2016 18:37
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.1.14)  2 AUG 2016 17:29
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1327,28 +1327,35 @@ LaTeX Info: Redefining \nameref on input line 46.
 \@outlinefile=\write4
 \openout4 = `"Rapport Stage.out"'.
 
-LaTeX Font Info:    Try loading font information for TS1+lmr on input line 79.
+LaTeX Font Info:    Try loading font information for TS1+lmr on input line 67.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 ) [1
 
-{/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 139.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 139.
+{/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 146.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 146.
  (./Rapport Stage.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 139.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 139.
-Package rerunfilecheck Info: File `"Rapport Stage".out' has not changed.
-(rerunfilecheck)             Checksum: 7D5DBD79AE6155D6D0BF19895CD5C260;196.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 139.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 146.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 146.
+
+
+Package rerunfilecheck Warning: File `"Rapport Stage".out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `"Rapport Stage".out':
+(rerunfilecheck)             Before: 7D5DBD79AE6155D6D0BF19895CD5C260;196
+(rerunfilecheck)             After:  0CF7755CF6F56B4C4AA65A24BBB57194;258.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 146.
  ) 
 Here is how much of TeX's memory you used:
- 21075 strings out of 493089
- 378514 string characters out of 6134842
- 442712 words of memory out of 5000000
- 24173 multiletter control sequences out of 15000+600000
- 24795 words of font info for 26 fonts, out of 8000000 for 9000
+ 21079 strings out of 493089
+ 378561 string characters out of 6134842
+ 443712 words of memory out of 5000000
+ 24175 multiletter control sequences out of 15000+600000
+ 30792 words of font info for 28 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  48i,5n,54p,416b,439s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/
@@ -1357,10 +1364,10 @@ texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2015/texmf-dist
 /fonts/type1/public/lm/lmcsc10.pfb></usr/local/texlive/2015/texmf-dist/fonts/ty
 pe1/public/lm/lmr10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/
 lm/lmri10.pfb>
-Output written on "Rapport Stage.pdf" (1 page, 97534 bytes).
+Output written on "Rapport Stage.pdf" (2 pages, 98789 bytes).
 PDF statistics:
- 56 PDF objects out of 1000 (max. 8388607)
- 48 compressed objects within 1 object stream
- 7 named destinations out of 1000 (max. 500000)
+ 61 PDF objects out of 1000 (max. 8388607)
+ 52 compressed objects within 1 object stream
+ 9 named destinations out of 1000 (max. 500000)
  45 words of extra memory for PDF output out of 10000 (max. 10000000)
 
