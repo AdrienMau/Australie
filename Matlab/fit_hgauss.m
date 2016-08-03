@@ -28,8 +28,8 @@ p0(4)=length(x)/2;
 %     j=j+1;
 % end 
 % p0(4)=sqrt(((x(j)-p0(3))^2)*log(2*p0(2)/(p0(2)-p0(1)))/2); 
-
-opts1=  optimset('display','off');
-p=lsqnonlin(@(p)(y-p(1)-p(2)*exp(-((x-p(3))./(sqrt(2)*p(4))).^n )),p0);
+options = optimoptions('lsqnonlin','Display','off');
+% opts1=  optimset('display','off');
+p=lsqnonlin(@(p)(y-p(1)-p(2)*exp(-((x-p(3))./(sqrt(2)*p(4))).^n )),p0,[],[],options);
 
 end

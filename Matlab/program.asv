@@ -102,22 +102,16 @@ if(handles.chosen_algorithm==1)
 if(handles.imageisloaded)
     img2=handles.img2;
     histo=mean(img2); %histogram of image
-    if(handles.pixelrate)
-        x=(1:length(histo))*handles.pixelrate; % to do before or after fit ?
-    else
-        x=1:length(histo);
-    end
     figure
-    plot(x,histo);
+    plot(histo);
     hold on
-    
-    
+    x=1:length(histo);
+
     power= handles.lastSliderVal
     p=fit_hgauss(x,histo,power);
-
     %  p=fit_gauss_2(x,histo);
     fit=p(1)+p(2)*exp(-((x-p(3))./(sqrt(2)*p(4))).^power);
-
+  
     
     plot(x,fit)
     xlabel('pixel')
@@ -127,9 +121,7 @@ if(handles.imageisloaded)
     %set title (in nm if pixelrate has been defined, else in pixels)
     if(power==2) %Gaussian fit (not hypergaussian)
         if(handles.pixelrate) %is defined
-            %fit has been done with x in pixelrate
-%           title(['Gaussian fit: FWHM=',num2str(2.355*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error))])
-            title(['Gaussian fit: FWHM=',num2str(2.355*p(4)),'pix   Error=',num2str(round(mean_square_error))])            
+            title(['Gaussian fit: FWHM=',num2str(2.355*p(4)*handles.pixelrate),'nm   Error=',num2str(round(mean_square_error))])
             xlabel('nm')
         else
             title(['Gaussian fit: FWHM=',num2str(2.355*p(4)),'pix   Error=',num2str(round(mean_square_error))])
@@ -160,14 +152,12 @@ if(handles.imageisloaded)
 
     img2=handles.img2;
     histo=mean(img2); %histogram of image
-
-    x=1:length(histo);
-    if(handles.pixelrate)
-        x=x*handles.pixelrate; %maybe change x before fit and not after?
-    end
     figure
-    plot(x,histo);
+    plot(histo);
     hold on
+    x=1:length(histo);
+
+
 
 %search best power for fit
 	chosen_p=zeros(1,5);
@@ -185,8 +175,8 @@ for(power=2:2:16)
 	end
 end
 
-    power=best_pow;
-    fit=chosen_p(1)+chosen_p(2)*exp(-((x-chosen_p(3))./(sqrt(2)*chosen_p(4))).^power);
+power=best_pow;
+fit=chosen_p(1)+chosen_p(2)*exp(-((x-chosen_p(3))./(sqrt(2)*chosen_p(4))).^power);
 
     plot(x,fit)
     xlabel('pixel')
@@ -194,16 +184,14 @@ end
     %set title (in nm if pixelrate has been defined, else in pixels)
     if(power==2) %Gaussian fit (not hypergaussian)
         if(handles.pixelrate) %is defined
-%             title(['Gaussian fit: FWHM=',num2str(2.355*chosen_p(4)*handles.pixelrate),'nm   Error=',num2str(round(minimalerror))])
-            title(['Gaussian fit: FWHM=',num2str(2.355*chosen_p(4)),'nm   Error=',num2str(round(minimalerror))])
+            title(['Gaussian fit: FWHM=',num2str(2.355*chosen_p(4)*handles.pixelrate),'nm   Error=',num2str(round(minimalerror))])
             xlabel('nm')
         else
             title(['Gaussian fit: FWHM=',num2str(2.355*chosen_p(4)),'pix   Error=',num2str(round(minimalerror))])
         end
     else
         if(handles.pixelrate) %is defined
-%             title({['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)*handles.pixelrate),'nm'];['Error=',num2str(round(minimalerror)), ' power=',num2str(power)]})
-            title({['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)),'nm'];['Error=',num2str(round(minimalerror)), ' power=',num2str(power)]})
+            title({['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)*handles.pixelrate),'nm'];['Error=',num2str(round(minimalerror)), ' power=',num2str(power)]})
             xlabel('nm')
         else
             title({['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)),'pix'];['Error=',num2str(round(minimalerror)),' power=',num2str(power)]})
@@ -240,10 +228,14 @@ im_med=median(median(im));
 %decrease, so we may pass the good threshold => improvement...)
 while((iter<maxiter)*(num~=n_holes))
 	imbinary=im<im_med/(1+iter/5);
-	[L_note,num]=bwlabel(imbinary);
+	[L,num]=bwlabel(imbinary);
 	iter=iter+1;
 end
-
+figure
+subplot(1,2,1)
+imshow(L);
+subplot(1,2,2)
+imshow(im)
 
 %detection des contours: quand il n'y a pas de '1' sur une colonne
 Histo=max(imbinary);
@@ -285,9 +277,6 @@ edge_positions(2,:)=min(length(Histo),edge_positions(2,:)+radius_x);
 radius=handles.yplus; %we will do approxgauss on a X*radius image
 img_for_user=im; %to show which regions have been selected
 figure
-
-hole_size_mean=0;
-
 for(n=1:n_holes)
     imcutbinary=imbinary(:,edge_positions(1,n):edge_positions(2,n));
     Histoy=max(imcutbinary');
@@ -307,15 +296,10 @@ for(n=1:n_holes)
 
     subplot(2,n_holes,n+n_holes)
     histo=mean(img); %histogram of image
-
-    if(handles.pixelrate)
-        x=(1:length(histo))*handles.pixelrate; % to do before or after fit ?
-    else
-        x=1:length(histo);
-    end
-    plot(x,histo);
+    plot(histo);
     hold on
-    
+    x=1:length(histo);
+
 %search best power for fit
 	chosen_p=zeros(1,5); %5: the five parameters for p
   	best_pow=2;
@@ -341,24 +325,21 @@ for(n=1:n_holes)
     %set title (in nm if pixelrate has been defined, else in pixels)
     if(power==2) %Gaussian fit (not hypergaussian)
         if(handles.pixelrate) %is defined
-%             title({['Gaussian fit: FWHM=',num2str(2.355*chosen_p(4)*handles.pixelrate),'nm'];['Error=',num2str(round(minimalerror))]})
-            title({['Gaussian fit: FWHM=',num2str(2.355*chosen_p(4)),'nm'];['Error=',num2str(round(minimalerror))]})
+            title({['Gaussian fit: FWHM=',num2str(2.355*chosen_p(4)*handles.pixelrate),'nm'];['Error=',num2str(round(minimalerror))]})
             xlabel('nm')
         else
             title({['Gaussian fit: FWHM=',num2str(2.355*chosen_p(4)),'pix'];['Error=',num2str(round(minimalerror))]})
         end
     else
         if(handles.pixelrate) %is defined
-%             title({['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)*handles.pixelrate),'nm'];['Error=',num2str(round(minimalerror)), ' power=',num2str(power)]})
-           %fit has been done in nm, so no need to multiply by pixelrate !
-            title({['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)),'nm'];['Error=',num2str(round(minimalerror)), ' power=',num2str(power)]})
+            title({['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)*handles.pixelrate),'nm'];['Error=',num2str(round(minimalerror)), ' power=',num2str(power)]})
             xlabel('nm')
         else
             title({['HyperGaussian fit: FWHM=',num2str(2.8284*(0.6931)^(1/power)*chosen_p(4)),'pix' ];[  'Error=',num2str(round(minimalerror)),' power=',num2str(power)]})
         end
     end
 
-    hole_size_mean=hole_size_mean+2.8284*(0.6931)^(1/power)*chosen_p(4);
+    
     
     %finally, we will make a visible rectangle for user:
     img_for_user(max(0,round(middle-radius/2)),edge_positions(1,n):edge_positions(2,n))=255-n;
@@ -366,16 +347,9 @@ for(n=1:n_holes)
     img_for_user(max(0,round(middle-radius/2)):min(L,round(middle+radius/2)),edge_positions(1,n))=255-n;
     img_for_user(max(0,round(middle-radius/2)):min(L,round(middle+radius/2)),edge_positions(2,n))=255-n;
 end
-hole_size_mean=hole_size_mean/n_holes
-
-
 figure
-subplot(2,2,3)
 imshow(img_for_user)
-subplot(2,2,1)
-imshow(L_note);
-subplot(2,2,2)
-imshow(im)
+
 % ecart_final=3; %will take 3 or 4 thick -images to do the gaussian fit
 % shift=floor(max(0,(edge_positions(2,:)-ecart_final-edge_positions(1,:))/2))
 % shifted_positions=[edge_positions(1,:)+shift;edge_positions(2,:)-shift]
@@ -664,7 +638,7 @@ else %set new magnification , and new pixelrate
     pause(0.05)
     set(hObject,'BackgroundColor','green')
 end
-guidata(hObject,handles)
+
 
 
 % --- Executes during object creation, after setting all properties.
@@ -690,18 +664,20 @@ function pushbutton_manual_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 if(handles.imageisloaded)
-
+    try   % will check if pixelrate has been defined (by entering magnification)
+        if(handles.pixelrate) 
+        end
         axes(handles.axes1)
         rect = round(getrect());
         distance=sqrt(rect(3)*rect(3)+rect(4)*rect(4)) %in pixel
-        if(handles.pixelrate)
-            distance=distance*handles.pixelrate; %in nm
-            title(['distance = ',num2str(distance),' nm']);
-            handles.distance=distance;
-        else
-            title(['distance = ',num2str(distance),' pix']);
-        end
+        distance=distance*handles.pixelrate; %in nm
+        title(['distance = ',num2str(distance),' nm']);
+        handles.distance=distance;
         guidata(hObject,handles)
+    catch       %pixelrate not defined
+        axes(handles.axes1)
+        title(['Please Set Magnification !']);
+    end
 else
      axes(handles.axes1)
      title('You could load an image before ?')
@@ -821,7 +797,6 @@ title('original image')
     %set title (in nm if pixelrate has been defined, else in pixels)
     if(power==2) %Gaussian fit (not hypergaussian)
         if(handles.pixelrate) %is defined
-            
             title({['Gaussian fit: FWHM=',num2str(2.355*p(5)*handles.pixelrate),'nm'] ; [ ' MSE=',num2str(round(mean_square_error))]})
         else
             title({['Gaussian fit: FWHM=',num2str(2.355*p(5)),'pix'];[' MSE=',num2str(round(mean_square_error))]})
