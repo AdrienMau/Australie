@@ -1,0 +1,21 @@
+%scatter(scan,Cscan);
+
+scan=closure(:,5)
+length
+
+l=length(closure)
+
+
+
+t=255;
+
+for(n=1:l)
+    if(volt(n)==5)
+
+        scatter(scan(n),Cscan(n),mag(n),L(n),'filled')
+    hold on
+    else
+        scatter(scan(n),Cscan(n),mag(n),L(n))
+    end 
+    hold on
+end 
